@@ -2,9 +2,9 @@ name: Build
 
 on:
   push:
-    branches: [ master ]
+    branches: [ poqdev ]
   pull_request:
-    branches: [ master ]
+    branches: [ poqdev ]
 
 env:
   DOTNET_VERSION: 6.0.x
