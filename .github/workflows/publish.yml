@@ -6,7 +6,6 @@ on:
 
 env:
   DOTNET_VERSION: 6.0.x
-  BICEP_VERSION: 0.9.1
 
 jobs:
   publish:
@@ -39,7 +38,6 @@ jobs:
         name: dist
         path: |
           latest.zip
-          azuredeploy.bicep
 
   deploy:
     environment: production
@@ -52,12 +50,7 @@ jobs:
     - name: Azure Login
       uses: azure/login@v1
       with:
-        client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-
-    - name: Use Bicep ${{ env.BICEP_VERSION }}
-      run: az bicep install --version v${{ env.BICEP_VERSION }}
+        creds: '{"clientId":"${{ secrets.AZURE_CLIENT_ID }}","clientSecret":"${{ secrets.AZURE_CLIENTSECRET }}","subscriptionId":"${{ secrets.AZURE_SUBSCRIPTION_ID }}","tenantId":"${{ secrets.AZURE_TENANT_ID }}"}'        
 
     - name: Download artifacts
       uses: actions/download-artifact@v3
@@ -66,10 +59,5 @@ jobs:
 
     - name: Upload to Blob
       run: |
-        az storage blob upload --auth-mode login -f latest.zip --account-name stacmebotprod -c keyvault-acmebot -n v4/latest.zip --overwrite
-        az storage blob upload --auth-mode login -f latest.zip --account-name stacmebotprod -c keyvault-acmebot -n v4/${{ needs.publish.outputs.version }}.zip --overwrite
-
-    - name: Publish to Private Registry
-      run: |
-        az bicep publish --file azuredeploy.bicep --target br:cracmebotprod.azurecr.io/bicep/modules/keyvault-acmebot:v4
-        az bicep publish --file azuredeploy.bicep --target br:cracmebotprod.azurecr.io/bicep/modules/keyvault-acmebot:v${{ needs.publish.outputs.version }}
+        az storage blob upload --auth-mode login -f latest.zip --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} -c keyvault-acmebot -n v4/latest.zip --overwrite
+        az storage blob upload --auth-mode login -f latest.zip --account-name ${{ secrets.AZURE_STORAGE_ACCOUNT }} -c keyvault-acmebot -n v4/${{ needs.publish.outputs.version }}.zip --overwrite

@@ -8,7 +8,6 @@ on:
 
 env:
   DOTNET_VERSION: 6.0.x
-  BICEP_VERSION: 0.9.1
 
 jobs:
   build:
@@ -23,14 +22,8 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
-    - name: Use Bicep ${{ env.BICEP_VERSION }}
-      run: az bicep install --version v${{ env.BICEP_VERSION }}
-
     - name: Build project
       run: dotnet build -c Release
 
     - name: Lint C# code
       run: dotnet format --verify-no-changes --exclude ACMESharpCore --verbosity detailed --no-restore
-
-    - name: Lint Bicep template
-      run: az bicep build -f azuredeploy.bicep && git diff --exit-code --quiet
