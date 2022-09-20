@@ -1,9 +1,11 @@
 name: Publish
 
 on:
+  # push:
+  #   tags: [ v* ]
   push:
-    tags: [ v* ]
-
+    branches: [ poqdev ]
+    
 env:
   DOTNET_VERSION: 6.0.x
 
