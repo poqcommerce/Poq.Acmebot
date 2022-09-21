@@ -28,8 +28,11 @@ jobs:
       id: setup_version
       run: echo ::set-output name=version::${GITHUB_REF/refs\/tags\/v/}
 
+    # - name: Publish Functions
+    #   run: dotnet publish -c Release -r win-x86 --self-contained false -o ./dist -p:Version=${{ steps.setup_version.outputs.version }} KeyVault.Acmebot
+
     - name: Publish Functions
-      run: dotnet publish -c Release -r win-x86 --self-contained false -o ./dist -p:Version=${{ steps.setup_version.outputs.version }} KeyVault.Acmebot
+      run: dotnet publish -c Release -r win-x86 --self-contained false -o ./dist KeyVault.Acmebot
 
     - name: Zip Functions
       run: 7z a -mx=9 latest.zip ./dist/*
